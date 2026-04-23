@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#ff3c00" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Equipo" />
+  <title>Equipo de Cabrones</title>
+  <link rel="manifest" href="manifest.json" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --red: #ff3c00;
+      --orange: #ff7a00;
+      --yellow: #ffcc00;
+      --bg: #0e0e0e;
+      --surface: #181818;
+      --surface2: #222;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #666;
+      --success: #00e676;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      background: linear-gradient(135deg, #ff3c00 0%, #ff7a00 60%, #ffcc00 100%);
+      padding: 48px 20px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.07);
+    }
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -20px;
+      width: 160px; height: 160px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.1);
+    }
+    .header-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 42px;
+      letter-spacing: 2px;
+      color: #fff;
+      line-height: 1;
+      position: relative;
+      z-index: 1;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.2);
+    }
+    .header-sub {
+      font-size: 12px;
+      color: rgba(255,255,255,0.75);
+      margin-top: 4px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      position: relative;
+      z-index: 1;
+    }
+    .header-date {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 15px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 12px;
+      letter-spacing: 1px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── NAV TABS ── */
+    .tabs {
+      display: flex;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .tab {
+      flex: 1;
+      padding: 14px 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.2s;
+      background: none;
+      border-left: none;
+      border-right: none;
+      border-top: none;
+    }
+    .tab.active {
+      color: var(--red);
+      border-bottom: 3px solid var(--red);
+    }
+
+    /* ── CONTENT ── */
+    .content { padding: 20px 16px 100px; }
+
+    /* ── ADD EVENT BUTTON ── */
+    .fab {
+      position: fixed;
+      bottom: 28px;
+      right: 20px;
+      width: 60px; height: 60px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(255,60,0,0.5);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .fab:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(255,60,0,0.4); }
+
+    /* ── EVENT CARDS ── */
+    .event-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+      animation: slideIn 0.25s ease;
+    }
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .event-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, var(--red), var(--orange));
+      border-radius: 4px 0 0 4px;
+    }
+    .event-card.today::before { background: linear-gradient(180deg, var(--yellow), var(--orange)); }
+    .event-card.past { opacity: 0.45; }
+    .event-card.past::before { background: var(--border); }
+
+    .event-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 3px 8px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+    .tag-today { background: rgba(255,204,0,0.15); color: var(--yellow); }
+    .tag-tomorrow { background: rgba(255,122,0,0.15); color: var(--orange); }
+    .tag-upcoming { background: rgba(255,60,0,0.12); color: var(--red); }
+    .tag-past { background: rgba(255,255,255,0.05); color: var(--muted); }
+
+    .event-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 24px;
+      letter-spacing: 1px;
+      color: var(--text);
+      line-height: 1.1;
+    }
+    .event-meta {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .event-meta span { display: flex; align-items: center; gap: 4px; }
+    .event-notes {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #aaa;
+      background: rgba(255,255,255,0.04);
+      border-radius: 8px;
+      padding: 8px 10px;
+      line-height: 1.4;
+    }
+    .event-delete {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: rgba(255,60,0,0.1);
+      border: 1px solid rgba(255,60,0,0.2);
+      color: var(--red);
+      border-radius: 8px;
+      width: 32px; height: 32px;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+    }
+    .event-delete:active { background: rgba(255,60,0,0.25); }
+
+    /* ── SECTION LABEL ── */
+    .section-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 20px 0 10px;
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-title { font-family: 'Bebas Neue', sans-serif; font-size: 24px; color: #444; letter-spacing: 1px; }
+    .empty-sub { font-size: 13px; margin-top: 6px; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 300;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      padding: 24px 20px 48px;
+      width: 100%;
+      max-width: 480px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border-top: 1px solid var(--border);
+    }
+    .modal-overlay.open .modal {
+      transform: translateY(0);
+    }
+    .modal-handle {
+      width: 40px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 20px;
+    }
+    .modal-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ── FORM ── */
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input, .field textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    .field input:focus, .field textarea:focus {
+      border-color: var(--red);
+    }
+    .field textarea { resize: none; height: 72px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 8px;
+      box-shadow: 0 4px 16px rgba(255,60,0,0.35);
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-cancel {
+      width: 100%;
+      padding: 12px;
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* ── NAME SELECTOR ── */
+    .name-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+    .name-chip {
+      padding: 7px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .name-chip.selected {
+      background: rgba(255,60,0,0.15);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    /* ── SHARE BANNER ── */
+    .share-banner {
+      background: rgba(0,230,118,0.08);
+      border: 1px solid rgba(0,230,118,0.2);
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: slideIn 0.3s ease;
+    }
+    .share-banner-text { flex: 1; font-size: 13px; color: var(--success); }
+    .share-btn {
+      background: rgba(0,230,118,0.15);
+      border: 1px solid rgba(0,230,118,0.3);
+      color: var(--success);
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* ── LOADING ── */
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .spinner {
+      width: 36px; height: 36px;
+      border: 3px solid var(--border);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      margin: 0 auto 16px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── ERROR ── */
+    .error-bar {
+      background: rgba(255,60,0,0.1);
+      border: 1px solid rgba(255,60,0,0.3);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 13px;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+
+    /* ── SETUP SCREEN ── */
+    .setup-screen {
+      padding: 32px 20px;
+    }
+    .setup-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+    .setup-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .setup-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--red), var(--orange));
+      border: none;
+      border-radius: 12px;
+      color: #fff;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 2px;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+  </style>
+
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+
+<div class="header">
+  <div class="header-title">Equipo de Cabrones</div>
+  <div class="header-sub">Shared Team Calendar</div>
+  <div class="header-date" id="headerDate"></div>
+</div>
+
+<!-- ── TABS ── -->
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('upcoming')">📅 Upcoming</button>
+  <button class="tab" onclick="switchTab('all')">📋 All Events</button>
+  <button class="tab" onclick="switchTab('settings')">⚙️ Settings</button>
+</div>
+
+<!-- ── CONTENT ── -->
+
+<div class="content" id="content">
+  <div class="loading"><div class="spinner"></div>Loading events...</div>
+</div>
+
+<!-- ── FAB ── -->
+
+<button class="fab" onclick="openModal()" id="fab">+</button>
+
+<!-- ── ADD EVENT MODAL ── -->
+
+<div class="modal-overlay" id="modalOverlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Add Event</div>
+
+```
+<div class="field">
+  <label>Event Title *</label>
+  <input type="text" id="inputTitle" placeholder="e.g. Business Meeting" />
+</div>
+
+<div class="field field-row">
+  <div>
+    <label>Date *</label>
+    <input type="date" id="inputDate" />
+  </div>
+  <div>
+    <label>Time (optional)</label>
+    <input type="time" id="inputTime" />
+  </div>
+</div>
+
+<div class="field">
+  <label>Notes (optional)</label>
+  <textarea id="inputNotes" placeholder="Any details..."></textarea>
+</div>
+
+<div class="field">
+  <label>Added by</label>
+  <div class="name-chips" id="nameChips"></div>
+</div>
+
+<div id="formError" class="error-bar" style="display:none"></div>
+
+<button class="btn-submit" onclick="submitEvent()">SAVE EVENT</button>
+<button class="btn-cancel" onclick="closeModal()">Cancel</button>
+```
+
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIG — Fill these in
+// ============================================================
+const BIN_ID  = "69e8f259856a6821895fa390";
+const API_KEY = "$2a$10$VNdRdDN9mYfnYXBl8xW5me8nlq3TLl5wVJJq557nBy0st.X/pmznG";
+const TEAM_NAMES = ["Anamarie", "Jesus", "Jesse", "Nora", "Jennifer"];
+// ============================================================
+
+const BASE_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
+const HEADERS  = { "Content-Type": "application/json", "X-Master-Key": API_KEY, "X-Bin-Meta": "false" };
+
+let events = [];
+let currentTab = "upcoming";
+let selectedName = localStorage.getItem("equipo_name") || TEAM_NAMES[0];
+let lastAdded = null;
+
+// ── INIT ──────────────────────────────────────────────────────
+window.onload = async () => {
+  document.getElementById("headerDate").textContent = new Date().toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", year: "numeric"
+  });
+  buildNameChips();
+  await fetchEvents();
+  renderContent();
+};
+
+// ── FETCH ─────────────────────────────────────────────────────
+async function fetchEvents() {
+  try {
+    const r = await fetch(`${BASE_URL}/latest`, { headers: HEADERS });
+    const data = await r.json();
+    events = data.events || [];
+  } catch (e) {
+    events = [];
+    showError("Could not connect. Check your BIN_ID and API_KEY.");
+  }
+}
+
+async function saveEvents() {
+  const r = await fetch(BASE_URL, {
+    method: "PUT",
+    headers: HEADERS,
+    body: JSON.stringify({ events })
+  });
+  return r.ok;
+}
+
+// ── RENDER ────────────────────────────────────────────────────
+function renderContent() {
+  const content = document.getElementById("content");
+  const today = startOfDay(new Date());
+
+  let filtered = [...events].sort((a, b) => new Date(a.date) - new Date(b.date));
+  if (currentTab === "upcoming") {
+    filtered = filtered.filter(e => new Date(e.date + "T23:59:59") >= today);
+  }
+
+  if (currentTab === "settings") {
+    content.innerHTML = renderSettings();
+    return;
+  }
+
+  if (filtered.length === 0) {
+    content.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">📭</div>
+        <div class="empty-title">No events yet</div>
+        <div class="empty-sub">Tap + to add the first one</div>
+      </div>`;
+    return;
+  }
+
+  let html = "";
+
+  if (lastAdded) {
+    html += `
+      <div class="share-banner">
+        <div>✅</div>
+        <div class="share-banner-text">Event saved! Share with the team?</div>
+        <button class="share-btn" onclick="shareEvent()">Share</button>
+      </div>`;
+  }
+
+  if (currentTab === "upcoming") {
+    const todayEvents = filtered.filter(e => isSameDay(new Date(e.date + "T12:00:00"), today));
+    const rest = filtered.filter(e => !isSameDay(new Date(e.date + "T12:00:00"), today));
+    if (todayEvents.length) {
+      html += `<div class="section-label">Today</div>`;
+      todayEvents.forEach(e => { html += eventCard(e, today); });
+    }
+    if (rest.length) {
+      html += `<div class="section-label">Coming Up</div>`;
+      rest.forEach(e => { html += eventCard(e, today); });
+    }
+  } else {
+    const upcoming = filtered.filter(e => new Date(e.date + "T23:59:59") >= today);
+    const past = filtered.filter(e => new Date(e.date + "T23:59:59") < today).reverse();
+    if (upcoming.length) {
+      html += `<div class="section-label">Upcoming</div>`;
+      upcoming.forEach(e => { html += eventCard(e, today); });
+    }
+    if (past.length) {
+      html += `<div class="section-label">Past</div>`;
+      past.forEach(e => { html += eventCard(e, today, true); });
+    }
+  }
+
+  content.innerHTML = html;
+}
+
+function eventCard(e, today, isPast = false) {
+  const d = new Date(e.date + "T12:00:00");
+  const tag = getTag(d, today);
+  const dateStr = d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" });
+  const pastClass = isPast ? "past" : (tag === "TODAY" ? "today" : "");
+
+  return `
+    <div class="event-card ${pastClass}">
+      <span class="event-tag ${tagClass(tag)}">${tag}</span>
+      <button class="event-delete" onclick="deleteEvent('${e.id}')">✕</button>
+      <div class="event-title">${escHtml(e.title)}</div>
+      <div class="event-meta">
+        <span>📆 ${dateStr}</span>
+        ${e.time ? `<span>🕐 ${formatTime(e.time)}</span>` : ""}
+        <span>👤 ${escHtml(e.addedBy)}</span>
+      </div>
+      ${e.notes ? `<div class="event-notes">📝 ${escHtml(e.notes)}</div>` : ""}
+    </div>`;
+}
+
+function renderSettings() {
+  return `
+    <div class="setup-screen">
+      <div class="setup-title">Settings</div>
+      <div class="setup-sub">Update your credentials below then tap Save. Everyone in the group needs the same BIN_ID and API_KEY.</div>
+
+      <div class="field">
+        <label>JSONBin BIN_ID</label>
+        <input type="text" id="setBinId" value="${BIN_ID !== 'PASTE_YOUR_BIN_ID_HERE' ? '••••••••' : ''}" placeholder="Paste your Bin ID" />
+      </div>
+      <div class="field">
+        <label>JSONBin API_KEY</label>
+        <input type="text" id="setApiKey" value="${API_KEY !== 'PASTE_YOUR_API_KEY_HERE' ? '••••••••' : ''}" placeholder="Paste your API Key" />
+      </div>
+      <div class="field">
+        <label>Your Name</label>
+        <div class="name-chips" id="settingsNameChips">
+          ${TEAM_NAMES.map(n => `<div class="name-chip ${n === selectedName ? 'selected' : ''}" onclick="selectNameSettings('${n}')">${n}</div>`).join("")}
+        </div>
+      </div>
+      <div class="setup-sub" style="margin-top:20px">
+        <strong style="color:#ff7a00">Share link:</strong><br/>
+        Copy this page's URL and send it to your team. Everyone opens it, saves it to their home screen, done.
+      </div>
+      <button class="setup-btn" onclick="copyLink()">COPY APP LINK</button>
+    </div>`;
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  lastAdded = null;
+  document.querySelectorAll(".tab").forEach((t, i) => {
+    t.classList.toggle("active", ["upcoming","all","settings"][i] === tab);
+  });
+  document.getElementById("fab").style.display = tab === "settings" ? "none" : "flex";
+  renderContent();
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById("inputTitle").value = "";
+  document.getElementById("inputDate").value = todayISO();
+  document.getElementById("inputTime").value = "";
+  document.getElementById("inputNotes").value = "";
+  document.getElementById("formError").style.display = "none";
+  document.getElementById("modalOverlay").classList.add("open");
+}
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("open");
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById("modalOverlay")) closeModal();
+}
+
+// ── SUBMIT ────────────────────────────────────────────────────
+async function submitEvent() {
+  const title = document.getElementById("inputTitle").value.trim();
+  const date  = document.getElementById("inputDate").value;
+  const time  = document.getElementById("inputTime").value;
+  const notes = document.getElementById("inputNotes").value.trim();
+
+  if (!title) return showFormError("Event title is required.");
+  if (!date)  return showFormError("Date is required.");
+
+  const newEvent = {
+    id: Date.now().toString(),
+    title, date, time, notes,
+    addedBy: selectedName
+  };
+
+  events.push(newEvent);
+  lastAdded = newEvent;
+  closeModal();
+  renderContent();
+
+  const ok = await saveEvents();
+  if (!ok) showError("Saved locally but could not sync. Check connection.");
+}
+
+// ── DELETE ────────────────────────────────────────────────────
+async function deleteEvent(id) {
+  if (!confirm("Delete this event?")) return;
+  events = events.filter(e => e.id !== id);
+  lastAdded = null;
+  renderContent();
+  await saveEvents();
+}
+
+// ── SHARE ─────────────────────────────────────────────────────
+function shareEvent() {
+  if (!lastAdded) return;
+  const e = lastAdded;
+  const d = new Date(e.date + "T12:00:00").toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric"
+  });
+  const text = `📅 Equipo de Cabrones\n\n${e.title}\n📆 ${d}${e.time ? "\n🕐 " + formatTime(e.time) : ""}${e.notes ? "\n📝 " + e.notes : ""}\nAdded by ${e.addedBy}`;
+
+  if (navigator.share) {
+    navigator.share({ title: "Equipo de Cabrones", text });
+  } else {
+    navigator.clipboard.writeText(text).then(() => alert("Copied to clipboard!"));
+  }
+}
+
+function copyLink() {
+  navigator.clipboard.writeText(window.location.href).then(() => alert("Link copied!"));
+}
+
+// ── NAMES ─────────────────────────────────────────────────────
+function buildNameChips() {
+  const container = document.getElementById("nameChips");
+  container.innerHTML = TEAM_NAMES.map(n =>
+    `<div class="name-chip ${n === selectedName ? 'selected' : ''}" onclick="selectName('${n}')">${n}</div>`
+  ).join("");
+}
+function selectName(name) {
+  selectedName = name;
+  localStorage.setItem("equipo_name", name);
+  buildNameChips();
+}
+function selectNameSettings(name) {
+  selectedName = name;
+  localStorage.setItem("equipo_name", name);
+  document.querySelectorAll("#settingsNameChips .name-chip").forEach(c => {
+    c.classList.toggle("selected", c.textContent === name);
+  });
+}
+
+// ── HELPERS ───────────────────────────────────────────────────
+function getTag(d, today) {
+  const diff = Math.round((startOfDay(d) - today) / 86400000);
+  if (diff === 0) return "TODAY";
+  if (diff === 1) return "TOMORROW";
+  if (diff < 0)  return "PAST";
+  return `IN ${diff}D`;
+}
+function tagClass(tag) {
+  if (tag === "TODAY")    return "tag-today";
+  if (tag === "TOMORROW") return "tag-tomorrow";
+  if (tag === "PAST")     return "tag-past";
+  return "tag-upcoming";
+}
+function startOfDay(d) {
+  const c = new Date(d); c.setHours(0,0,0,0); return c;
+}
+function isSameDay(a, b) {
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function todayISO() {
+  return new Date().toISOString().split("T")[0];
+}
+function formatTime(t) {
+  if (!t) return "";
+  const [h, m] = t.split(":");
+  const ampm = +h >= 12 ? "PM" : "AM";
+  return `${+h % 12 || 12}:${m} ${ampm}`;
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function showError(msg) {
+  const el = document.createElement("div");
+  el.className = "error-bar";
+  el.textContent = msg;
+  document.getElementById("content").prepend(el);
+}
+function showFormError(msg) {
+  const el = document.getElementById("formError");
+  el.textContent = msg;
+  el.style.display = "block";
+}
+</script>
+
+</body>
+</html>
